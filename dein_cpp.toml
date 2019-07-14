@@ -1,0 +1,32 @@
+[[plugins]]
+repo = 'autozimu/LanguageClient-neovim'
+rev = 'next'
+build = 'bash install.sh'
+on_ft = ['cpp']
+depends = ['deoplete.nvim']
+hook_add = '''
+set hidden
+let g:LanguageClient_serverCommands = {
+      \ 'cpp': ['clangd'],
+      \ }
+let g:LanguageClient_loadSettings = 1
+let g:LanguageClient_hasSnippetSupport = 0
+
+set completefunc=LanguageClient#complete
+
+nnoremap K :call LanguageClient#textDocument_hover()<CR>
+nnoremap F :call LanguageClient#textDocument_formatting()<CR>
+'''
+
+[[plugins]]
+repo = 'rhysd/vim-clang-format'
+on_ft = 'cpp'
+hook_add = '''
+function! CPPCodeCleanup()
+  let l:lines='all'
+  let g:clang_format_fallback_style = 'Google'
+  :pyf /usr/local/share/clang/clang-format.py
+endfunction
+command! CPPCodeCleanup call CPPCodeCleanup()
+autocmd BufWrite *.{cpp} :CPPCodeCleanup
+'''
