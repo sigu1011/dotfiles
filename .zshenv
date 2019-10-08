@@ -122,3 +122,5 @@ alias glogn="git log --oneline --graph -n10"
 #alias djrun="python manage.py runserver"
 #alias djshell="python manage.py shell"
 
+export NVM_DIR="$HOME/.nvm"
+source $NVM_DIR/nvm.sh
