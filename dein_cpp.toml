@@ -6,11 +6,15 @@ on_ft = ['cpp']
 depends = ['deoplete.nvim']
 hook_add = '''
 set hidden
+
 let g:LanguageClient_serverCommands = {
       \ 'cpp': ['clangd'],
       \ }
 let g:LanguageClient_loadSettings = 1
 let g:LanguageClient_hasSnippetSupport = 0
+
+"let g:LanguageClient_loggingFile = expand('~/.config/nvim/LanguageClient.log')
+"let g:LanguageClient_serverStderr = '/tmp/clangd.stderr'
 
 set completefunc=LanguageClient#complete
 
@@ -25,8 +29,9 @@ hook_add = '''
 function! CPPCodeCleanup()
   let l:lines='all'
   let g:clang_format_fallback_style = 'Google'
-  :pyf /usr/share/vim/addons/syntax/clang-format-7.py
+  :pyf /usr/share/vim/addons/syntax/clang-format-8.py
 endfunction
+
 command! CPPCodeCleanup call CPPCodeCleanup()
 autocmd BufWrite *.{cpp} :CPPCodeCleanup
 '''
