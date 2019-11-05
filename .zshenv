@@ -127,7 +127,6 @@ mkcd() {
   cd $1;
 }
 
-# alias functions
 # check process status
 cps () {
     ps aux | grep -E "PID|$1" | grep -v grep
