@@ -6,7 +6,7 @@ export LANGUAGE=ja_JP.UTF-8
 export LC_ALL=ja_JP.UTF-8
 export LC_CTYPE=jp_JP.UTF-8
 export LANG=ja_JP.UTF-8
-
+#
 #####################################################################
 # export
 #####################################################################
@@ -118,9 +118,34 @@ alias gcm="git commit -m"
 alias gl="git log"
 alias glogn="git log --oneline --graph -n10"
 
+# echo PATH
+alias path='echo $PATH'
+
+# make and change directory
+mkcd() {
+  mkdir $1;
+  cd $1;
+}
+
+# alias functions
+# check process status
+cps () {
+    ps aux | grep -E "PID|$1" | grep -v grep
+}
+
+# copy to clipboard
+clip() {
+  if [[ -n "$1" ]]; then
+    cat "$1" | pbcopy
+  else
+    pbcopy
+  fi
+}
+
 # Django manage.py
 #alias djrun="python manage.py runserver"
 #alias djshell="python manage.py shell"
 
+# nvm setting
 export NVM_DIR="$HOME/.nvm"
 source $NVM_DIR/nvm.sh
