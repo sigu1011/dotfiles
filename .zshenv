@@ -1,39 +1,29 @@
 # zprof によるプロファイリング結果が出力
-# zmodload zsh/zprof && zprof
+#zmodload zsh/zprof && zprof
 
 # LANG
 export LANGUAGE=ja_JP.UTF-8
 export LC_ALL=ja_JP.UTF-8
-export LC_CTYPE=jp_JP.UTF-8
+export LC_CTYPE=ja_JP.UTF-8
 export LANG=ja_JP.UTF-8
-#
+
 #####################################################################
 # export
 #####################################################################
 
+# mysql-client
+export PATH="/opt/homebrew/opt/mysql-client/bin:$PATH"
+
 # TERM
-# export TERM=xterm-256color
-
-# .local
-export PATH=$PATH:~/.local/bin
-
-# java
-export JAVA_VERSION=jdk-10.0.1
-export JAVA_HOME=/usr/local/$JAVA_VERSION
-export PATH=$PATH:$JAVA_HOME/bin
+#export TERM=xterm-256color
 
 # golang
 export PATH=$PATH:/usr/local/go/bin
-# GOPATH
 export GOPATH=$HOME/goprojects
 export PATH=$PATH:$GOPATH/bin
 
-# Ruby
-export PATH=$PATH:$HOME/.rbenv/bin
-eval "$(rbenv init -)"
-
-# Neovim
-export XDG_CONGIG_HOME=~/.config
+# cargo
+#. "$HOME/.cargo/env"
 
 # ls cmd color
 export LSCOLORS=gxfxcxdxbxegedabagacag
@@ -52,18 +42,6 @@ linux*)
 esac
 
 #####################################################################
-# editor
-#####################################################################
-
-# defaut editor is vim
-export EDITOR=vim
-# when not exist vim then start up vi
-if ! type vim > /dev/null 2>&1; then
-    alias vim=vi
-fi
-
-
-#####################################################################
 # alias
 #####################################################################
 
@@ -72,32 +50,40 @@ alias -g L='| less'
 alias -g H='| head'
 alias -g G='| grep'
 
-# cp,rm,mkdir add '-i' or '-p'
+# cp, rm, mkdir add '-i' or '-p'
 alias cp='cp -i'
 alias rm='rm -i'
 alias mkdir='mkdir -p'
 
+# vim
+alias vi='vim'
+
 # ls alias
-alias l='ls -ltr --color=auto'
-alias la='ls -la --color=auto'
-alias ll='ls -l --color=auto'
-alias lst='ls -ltr --color=auto'
+case "${OSTYPE}" in
+darwin*)
+  # Mac
+  alias l='ls -lGtr'
+  alias la='ls -lGa'
+  alias ll='ls -lG'
+  alias lst='ls -lGtr'
+  ;;
+linux*)
+  # Linux
+  alias l='ls -ltr --color=auto'
+  alias la='ls -la --color=auto'
+  alias ll='ls -l --color=auto'
+  alias lst='ls -ltr --color=auto'
+  ;;
+esac
 
 # source
 alias so='source'
+
 # source zsh
-alias sourcez="source ~/.zshrc"
+alias soz="source ~/.zshrc"
 
 # history
 alias h='fc -lt '%F %T' 1'
-
-# xsel alias
-alias pbcopy='xsel --clipboard --input'
-alias pbpaste='xsel --clipboard --output'
-
-# nvim alias
-alias vi='vim'
-alias vim='nvim'
 
 # git status
 alias gs="git status"
@@ -141,10 +127,9 @@ clip() {
   fi
 }
 
-# Django manage.py
-#alias djrun="python manage.py runserver"
-#alias djshell="python manage.py shell"
+# assume-role
+aws-assume() {
+  cmd="assume-role -duration 8h $1"
+  eval $(${=cmd})
+}
 
-# nvm setting
-export NVM_DIR="$HOME/.nvm"
-source $NVM_DIR/nvm.sh

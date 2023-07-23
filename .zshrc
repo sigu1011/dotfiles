@@ -2,14 +2,20 @@
 # basic
 #####################################################################
 
-# キーバインドの設定
-# emacsキーバインド 
-# bindkey -e
 # vimキーバインド
 bindkey -v
 
-# ノーマルモードへの移行を'jj'に変更する
+# ノーマルモードへの移行を'jj'に変更
 bindkey -M viins 'jj' vi-cmd-mode
+
+# anyenv
+eval "$(anyenv init -)"
+
+# tfenv
+export PATH="$HOME/.tfenv/bin:$PATH"
+
+# グロブ展開をしない
+setopt nonomatch
 
 #####################################################################
 # history
@@ -19,7 +25,7 @@ bindkey -M viins 'jj' vi-cmd-mode
 HISTSIZE=10000
 
 # ファイルに保存される件数
-SAVEHIST=10000
+SAVEHIST=100000
 
 # ヒストリーファイル
 HISTFILE=~/.zsh_history
@@ -50,7 +56,7 @@ zstyle ':completion:*' completer _expand _complete _correct _approximate
 zstyle ':completion:*' format 'Completing %d'
 zstyle ':completion:*' group-name ''
 zstyle ':completion:*' menu select=2
-eval "$(dircolors -b)"
+#eval "$(dircolors -b)"
 zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
 zstyle ':completion:*' list-colors ''
 zstyle ':completion:*' list-prompt %SAt %p: Hit TAB for more, or the character to insert%s
@@ -85,7 +91,7 @@ PROMPT2="%{${fg[yellow]}%} %_ > %{${reset_color}%}"
 # プロンプト指定(訂正機能)
 SPROMPT="%{${fg[red]}%}correct: %R -> %r ? [n,y,a,e] %{${reset_color}%}"
 
-# Vi modeをプロンプトに表示する
+# vi modeをプロンプトに表示する
 function zle-line-init zle-keymap-select {
     VIM_NORMAL="%K{208}%F{black}<-%k%f%K{208}%F{white} % NORMAL %k%f%K{black}%F{208}->%k%f" 
     VIM_INSERT="%K{075}%F{black}<-%k%f%K{075}%F{white} % INSERT %k%f%K{black}%F{075}->%k%f"
@@ -96,7 +102,7 @@ function zle-line-init zle-keymap-select {
 zle -N zle-line-init
 zle -N zle-keymap-select
 
-# 補完候補もLS_COLORSに合わせて色が付くようにする
+# 補完候補もLS_COLORSに合わせて色を付与
 zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
 
 #####################################################################
@@ -104,15 +110,15 @@ zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
 #####################################################################
 
 # zplug PATH
-export ZPLUG_HOME=$HOME/.zplug
-source $ZPLUG_HOME/init.zsh
+export ZPLUG_HOME=${HOME}/.zplug
+source ${ZPLUG_HOME}/init.zsh
 
 # zplug
 zplug 'zplug/zplug', hook-build:'zplug --self-manage'
 
 # theme (https://github.com/sindresorhus/pure#zplug)
-zplug "mafredri/zsh-async"
-zplug "sindresorhus/pure"
+zplug "mafredri/zsh-async", from:"github", use:"async.zsh"
+zplug "sindresorhus/pure", from:"github", use:"pure.zsh", as:"theme"
 
 # Syntax highlighting (https://github.com/zsh-users/zsh-syntax-highlighting)
 zplug "zsh-users/zsh-syntax-highlighting", defer:2
@@ -127,7 +133,7 @@ zplug "chrissicool/zsh-256color"
 zstyle ':completion:*' menu select
 
 # git Supports oh-my-zsh plugins and the like
-zplug "plugins/git",   from:oh-my-zsh
+zplug "plugins/git", from:"oh-my-zsh"
 
 # Install plugins if there are plugins that have not been installed
 if ! zplug check --verbose; then
@@ -140,12 +146,3 @@ fi
 # Then, source plugins and add commands to $PATH
 zplug load --verbose
 
-#####################################################################
-# Google Cloud SDK
-#####################################################################
-
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f "$HOME/google-cloud-sdk/path.zsh.inc" ]; then . "$HOME/google-cloud-sdk/path.zsh.inc"; fi
-
-# The next line enables shell command completion for gcloud.
-if [ -f "$HOME/google-cloud-sdk/completion.zsh.inc" ]; then . "$HOME/google-cloud-sdk/completion.zsh.inc"; fi
