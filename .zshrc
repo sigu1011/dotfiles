@@ -11,6 +11,9 @@ bindkey -M viins 'jj' vi-cmd-mode
 # anyenv
 eval "$(anyenv init -)"
 
+# pyenv-virtualenv
+echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.zshrc
+
 # tfenv
 export PATH="$HOME/.tfenv/bin:$PATH"
 
