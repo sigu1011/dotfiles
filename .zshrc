@@ -1,6 +1,6 @@
-#####################################################################
-# basic
-#####################################################################
+#-------#
+# basic #
+#-------#
 
 # vimキーバインド
 bindkey -v
@@ -8,21 +8,22 @@ bindkey -v
 # ノーマルモードへの移行を'jj'に変更
 bindkey -M viins 'jj' vi-cmd-mode
 
+# keychain
+/usr/bin/keychain $HOME/.ssh/id_rsa
+source $HOME/.keychain/`hostname`-sh
+
 # anyenv
 eval "$(anyenv init -)"
 
 # pyenv-virtualenv
-echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.zshrc
-
-# tfenv
-export PATH="$HOME/.tfenv/bin:$PATH"
+eval "$(pyenv virtualenv-init -)"
 
 # グロブ展開をしない
 setopt nonomatch
 
-#####################################################################
-# history
-#####################################################################
+#---------#
+# history #
+#---------#
 
 # メモリ上に保存される件数(検索できる件数)
 HISTSIZE=10000
@@ -48,9 +49,10 @@ setopt histignoredups
 # 重複するコマンドは古い履歴から削除する
 setopt histignorealldups
 
-#####################################################################
-# autocomplete
-#####################################################################
+#--------------#
+# autocomplete #
+#--------------#
+
 autoload -Uz compinit
 compinit
 
@@ -59,7 +61,6 @@ zstyle ':completion:*' completer _expand _complete _correct _approximate
 zstyle ':completion:*' format 'Completing %d'
 zstyle ':completion:*' group-name ''
 zstyle ':completion:*' menu select=2
-#eval "$(dircolors -b)"
 zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
 zstyle ':completion:*' list-colors ''
 zstyle ':completion:*' list-prompt %SAt %p: Hit TAB for more, or the character to insert%s
@@ -81,9 +82,10 @@ setopt auto_pushd
 # auto_pushdで重複するディレクトリは記録しない
 setopt pushd_ignore_dups
 
-#####################################################################
-# color
-#####################################################################
+#-------#
+# color #
+#-------#
+
 autoload colors
 colors
 
@@ -108,44 +110,50 @@ zle -N zle-keymap-select
 # 補完候補もLS_COLORSに合わせて色を付与
 zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
 
-#####################################################################
-# zplug
-#####################################################################
+#-------#
+# zinit #
+#-------#
 
-# zplug PATH
-export ZPLUG_HOME=${HOME}/.zplug
-source ${ZPLUG_HOME}/init.zsh
-
-# zplug
-zplug 'zplug/zplug', hook-build:'zplug --self-manage'
-
-# theme (https://github.com/sindresorhus/pure#zplug)
-zplug "mafredri/zsh-async", from:"github", use:"async.zsh"
-zplug "sindresorhus/pure", from:"github", use:"pure.zsh", as:"theme"
-
-# Syntax highlighting (https://github.com/zsh-users/zsh-syntax-highlighting)
-zplug "zsh-users/zsh-syntax-highlighting", defer:2
-
-# history
-zplug "zsh-users/zsh-history-substring-search"
-
-# autocomplete
-zplug "zsh-users/zsh-autosuggestions"
-zplug "zsh-users/zsh-completions"
-zplug "chrissicool/zsh-256color"
-zstyle ':completion:*' menu select
-
-# git Supports oh-my-zsh plugins and the like
-zplug "plugins/git", from:"oh-my-zsh"
-
-# Install plugins if there are plugins that have not been installed
-if ! zplug check --verbose; then
-  printf "Install? [y/N]: "
-  if read -q; then
-    echo; zplug install
-  fi
+### Added by Zinit's installer
+if [[ ! -f $HOME/.local/share/zinit/zinit.git/zinit.zsh ]]; then
+    print -P "%F{33} %F{220}Installing %F{33}ZDHARMA-CONTINUUM%F{220} Initiative Plugin Manager (%F{33}zdharma-continuum/zinit%F{220})…%f"
+    command mkdir -p "$HOME/.local/share/zinit" && command chmod g-rwX "$HOME/.local/share/zinit"
+    command git clone https://github.com/zdharma-continuum/zinit "$HOME/.local/share/zinit/zinit.git" && \
+        print -P "%F{33} %F{34}Installation successful.%f%b" || \
+        print -P "%F{160} The clone has failed.%f%b"
 fi
 
-# Then, source plugins and add commands to $PATH
-zplug load --verbose
+source "$HOME/.local/share/zinit/zinit.git/zinit.zsh"
+autoload -Uz _zinit
+(( ${+_comps} )) && _comps[zinit]=_zinit
+
+# Load a few important annexes, without Turbo
+# (this is currently required for annexes)
+zinit light-mode for \
+    zdharma-continuum/zinit-annex-as-monitor \
+    zdharma-continuum/zinit-annex-bin-gem-node \
+    zdharma-continuum/zinit-annex-patch-dl \
+    zdharma-continuum/zinit-annex-rust
+
+### End of Zinit's installer chunk
+
+#---------------#
+# zinit plugins #
+#---------------#
+
+# To load Oh My Zsh plugins 
+zinit snippet OMZ::plugins/git/git.plugin.zsh
+
+# Theme
+zinit ice compile'(pure|async).zsh' pick'async.zsh' src'pure.zsh'
+zinit light sindresorhus/pure
+
+# Syntax highlighting
+zinit light zsh-users/zsh-syntax-highlighting
+zinit light chrissicool/zsh-256color
+
+# Auto-complete
+zinit light zsh-users/zsh-autosuggestions
+zinit light zsh-users/zsh-completions
+zstyle ':completion:*' menu select
 
