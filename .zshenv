@@ -2,20 +2,32 @@
 #zmodload zsh/zprof && zprof
 
 # LANG
-export LANGUAGE=ja_JP.UTF-8
-export LC_ALL=ja_JP.UTF-8
-export LC_CTYPE=ja_JP.UTF-8
-export LANG=ja_JP.UTF-8
+# export LANGUAGE=ja_JP.UTF-8
+# export LC_ALL=ja_JP.UTF-8
+# export LC_CTYPE=ja_JP.UTF-8
+# export LANG=ja_JP.UTF-8
 
-#####################################################################
-# export
-#####################################################################
+#--------#
+# export #
+#--------#
 
-# mysql-client
-export PATH="/opt/homebrew/opt/mysql-client/bin:$PATH"
+# snap
+export PATH=$PATH:/snap/bin
+
+# anyenv
+export PATH="$HOME/.anyenv/bin:$PATH"
+
+# pipx for awsume
+export PATH="$PATH:$HOME/.local/bin"
+
+# AWSume alias to source the AWSume script
+alias awsume="source \$(pyenv which awsume)"
+
+# Auto-Complete function for AWSume
+fpath=(~/.awsume/zsh-autocomplete/ $fpath)
 
 # TERM
-#export TERM=xterm-256color
+export TERM=xterm-256color
 
 # golang
 export PATH=$PATH:/usr/local/go/bin
@@ -41,9 +53,9 @@ linux*)
   ;;
 esac
 
-#####################################################################
-# alias
-#####################################################################
+#-------#
+# alias #
+#-------#
 
 # global alias
 alias -g L='| less'
@@ -80,7 +92,7 @@ esac
 alias so='source'
 
 # source zsh
-alias soz="source ~/.zshrc"
+alias sourcez="source ~/.zshrc"
 
 # history
 alias h='fc -lt '%F %T' 1'
@@ -107,6 +119,14 @@ alias glogn="git log --oneline --graph -n10"
 # echo PATH
 alias path='echo $PATH'
 
+# xsel
+alias pbcopy='xsel --clipboard --input'
+alias pbpaste='xsel --clipboard --output'
+
+#----------#
+# function #
+#----------#
+
 # make and change directory
 mkcd() {
   mkdir $1;
@@ -127,9 +147,34 @@ clip() {
   fi
 }
 
-# assume-role
-aws-assume() {
-  cmd="assume-role -duration 8h $1"
-  eval $(${=cmd})
+# ctrl+rで過去のコマンドを選択する
+peco-select-history() {
+  BUFFER=$(\history -n -r 1 | peco --query "$LBUFFER")
+  CURSOR=$#BUFFER
+  zle clear-screen
 }
+zle -N peco-select-history
+bindkey '^r' peco-select-history
+
+# ctrl+fで移動したディレクトリを選択する
+if [[ -n $(echo ${^fpath}/chpwd_recent_dirs(N)) && -n $(echo ${^fpath}/cdr(N)) ]]; then
+    autoload -Uz chpwd_recent_dirs cdr add-zsh-hook
+    add-zsh-hook chpwd chpwd_recent_dirs
+    zstyle ':completion:*' recent-dirs-insert both
+    zstyle ':chpwd:*' recent-dirs-default true
+    zstyle ':chpwd:*' recent-dirs-max 1000
+fi
+
+peco-cdr () {
+    local selected_dir="$(cdr -l | sed 's/^[0-9]\+ \+//' | peco --prompt="cdr >" --query "$LBUFFER")"
+    if [ -n "$selected_dir" ]; then
+        BUFFER="cd ${selected_dir}"
+        zle accept-line
+    fi
+}
+zle -N peco-cdr
+bindkey '^f' peco-cdr
+
+# pecoでコンテナを選択し、bashで接続する
+alias deb='docker exec -it $(docker ps | peco | cut -d " " -f 1) /bin/bash'
 
