@@ -83,38 +83,10 @@ setopt auto_pushd
 setopt pushd_ignore_dups
 
 #-------#
-# color #
-#-------#
-
-autoload colors
-colors
-
-# プロンプト
-PROMPT="%{${fg[green]}%}%n@%m %{${fg[yellow]}%}%~ %{${fg[red]}%}%# %{${reset_color}%}"
-# プロンプト指定(コマンドの続き)
-PROMPT2="%{${fg[yellow]}%} %_ > %{${reset_color}%}"
-# プロンプト指定(訂正機能)
-SPROMPT="%{${fg[red]}%}correct: %R -> %r ? [n,y,a,e] %{${reset_color}%}"
-
-# vi modeをプロンプトに表示する
-function zle-line-init zle-keymap-select {
-    VIM_NORMAL="%K{208}%F{black}<-%k%f%K{208}%F{white} % NORMAL %k%f%K{black}%F{208}->%k%f" 
-    VIM_INSERT="%K{075}%F{black}<-%k%f%K{075}%F{white} % INSERT %k%f%K{black}%F{075}->%k%f"
-    RPS1="${${KEYMAP/vicmd/$VIM_NORMAL}/(main|viins)/$VIM_INSERT}"
-    RPS2=$RPS1
-    zle reset-prompt
-}
-zle -N zle-line-init
-zle -N zle-keymap-select
-
-# 補完候補もLS_COLORSに合わせて色を付与
-zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
-
-#-------#
 # zinit #
 #-------#
 
-### Added by Zinit's installer
+# Added by Zinit's installer
 if [[ ! -f $HOME/.local/share/zinit/zinit.git/zinit.zsh ]]; then
     print -P "%F{33} %F{220}Installing %F{33}ZDHARMA-CONTINUUM%F{220} Initiative Plugin Manager (%F{33}zdharma-continuum/zinit%F{220})…%f"
     command mkdir -p "$HOME/.local/share/zinit" && command chmod g-rwX "$HOME/.local/share/zinit"
@@ -135,13 +107,13 @@ zinit light-mode for \
     zdharma-continuum/zinit-annex-patch-dl \
     zdharma-continuum/zinit-annex-rust
 
-### End of Zinit's installer chunk
+# End of Zinit's installer chunk
 
 #---------------#
 # zinit plugins #
 #---------------#
 
-# To load Oh My Zsh plugins 
+# To load Oh My Zsh plugins
 zinit snippet OMZ::plugins/git/git.plugin.zsh
 
 # Theme
@@ -157,3 +129,198 @@ zinit light zsh-users/zsh-autosuggestions
 zinit light zsh-users/zsh-completions
 zstyle ':completion:*' menu select
 
+#-------#
+# color #
+#-------#
+
+# term color
+export TERM=xterm-257color
+
+# ls color
+export LSCOLORS=gxfxcxdxbxegedabagacag
+export LS_COLORS='di=34;40:ln=35;40:so=32;40:pi=33;40:ex=31;40:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=30;46'
+
+case "${OSTYPE}" in
+darwin*)
+  # Mac
+  alias ls="ls -GF"
+  ;;
+linux*)
+  # Linux
+  alias ls='ls -F --color'
+  ;;
+esac
+
+autoload colors
+colors
+
+# プロンプト
+PROMPT="%{${fg[green]}%}%n@%m %{${fg[yellow]}%}%~ %{${fg[red]}%}%# %{${reset_color}%}"
+# プロンプト指定(コマンドの続き)
+PROMPT1="%{${fg[yellow]}%} %_ > %{${reset_color}%}"
+# プロンプト指定(訂正機能)
+SPROMPT="%{${fg[red]}%}correct: %R -> %r ? [n,y,a,e] %{${reset_color}%}"
+
+# vi modeをプロンプトに表示する
+function zle-line-init zle-keymap-select {
+    VIM_NORMAL="%K{207}%F{black}<-%k%f%K{208}%F{white} % NORMAL %k%f%K{black}%F{208}->%k%f" 
+    VIM_INSERT="%K{074}%F{black}<-%k%f%K{075}%F{white} % INSERT %k%f%K{black}%F{075}->%k%f"
+    RPS0="${${KEYMAP/vicmd/$VIM_NORMAL}/(main|viins)/$VIM_INSERT}"
+    RPS1=$RPS1
+    zle reset-prompt
+}
+zle -N zle-line-init
+zle -N zle-keymap-select
+
+# 補完候補もLS_COLORSに合わせて色を付与
+zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
+
+#--------#
+# export #
+#--------#
+
+# snap
+export PATH=$PATH:/snap/bin
+
+# anyenv
+export PATH="$HOME/.anyenv/bin:$PATH"
+
+# pipx for awsume
+export PATH="$PATH:$HOME/.local/bin"
+# AWSume alias to source the AWSume script
+alias awsume="source \$(pyenv which awsume)"
+# Auto-Complete function for AWSume
+fpath=(~/.awsume/zsh-autocomplete/ $fpath)
+
+# golang
+export PATH=$PATH:/usr/local/go/bin
+export GOPATH=$HOME/goprojects
+export PATH=$PATH:$GOPATH/bin
+
+# cargo
+#. "$HOME/.cargo/env"
+
+#-------#
+# alias #
+#-------#
+
+# global alias
+alias -g L='| less'
+alias -g H='| head'
+alias -g G='| grep'
+
+# cp, rm, mkdir add '-i' or '-p'
+alias cp='cp -i'
+alias rm='rm -i'
+alias mkdir='mkdir -p'
+
+# vim
+alias vi='vim'
+
+# ls alias
+case "${OSTYPE}" in
+darwin*)
+  # Mac
+  alias l='ls -lGtr'
+  alias la='ls -lGa'
+  alias ll='ls -lG'
+  alias lst='ls -lGtr'
+  ;;
+linux*)
+  # Linux
+  alias l='ls -ltr --color=auto'
+  alias la='ls -la --color=auto'
+  alias ll='ls -l --color=auto'
+  alias lst='ls -ltr --color=auto'
+  ;;
+esac
+
+# source
+alias so='source'
+
+# source zsh
+alias sourcez="source ~/.zshrc"
+
+# history
+alias h='fc -lt '%F %T' 1'
+
+# git status
+alias gs="git status"
+
+# git diff
+alias gd="git diff"
+alias gdc="git diff --cached "
+
+# git add
+alias ga="git add "
+alias gap="git add -p "
+
+# git commit
+alias gc="git commit"
+alias gcm="git commit -m"
+
+# git log
+alias gl="git log"
+alias glogn="git log --oneline --graph -n10"
+
+# echo PATH
+alias path='echo $PATH'
+
+# xsel
+alias pbcopy='xsel --clipboard --input'
+alias pbpaste='xsel --clipboard --output'
+
+#----------#
+# function #
+#----------#
+
+# make and change directory
+mkcd() {
+  mkdir $1;
+  cd $1;
+}
+
+# check process status
+cps () {
+    ps aux | grep -E "PID|$1" | grep -v grep
+}
+
+# copy to clipboard
+clip() {
+  if [[ -n "$1" ]]; then
+    cat "$1" | pbcopy
+  else
+    pbcopy
+  fi
+}
+
+# ctrl+rで過去のコマンドを選択する
+peco-select-history() {
+  BUFFER=$(\history -n -r 1 | peco --query "$LBUFFER")
+  CURSOR=$#BUFFER
+  zle clear-screen
+}
+zle -N peco-select-history
+bindkey '^r' peco-select-history
+
+# ctrl+fで移動したディレクトリを選択する
+if [[ -n $(echo ${^fpath}/chpwd_recent_dirs(N)) && -n $(echo ${^fpath}/cdr(N)) ]]; then
+    autoload -Uz chpwd_recent_dirs cdr add-zsh-hook
+    add-zsh-hook chpwd chpwd_recent_dirs
+    zstyle ':completion:*' recent-dirs-insert both
+    zstyle ':chpwd:*' recent-dirs-default true
+    zstyle ':chpwd:*' recent-dirs-max 1000
+fi
+
+peco-cdr () {
+    local selected_dir="$(cdr -l | sed 's/^[0-9]\+ \+//' | peco --prompt="cdr >" --query "$LBUFFER")"
+    if [ -n "$selected_dir" ]; then
+        BUFFER="cd ${selected_dir}"
+        zle accept-line
+    fi
+}
+zle -N peco-cdr
+bindkey '^f' peco-cdr
+
+# pecoでコンテナを選択し、bashで接続する
+alias deb='docker exec -it $(docker ps | peco | cut -d " " -f 1) /bin/bash'
