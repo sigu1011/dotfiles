@@ -46,10 +46,8 @@ export PATH=$PATH:$GOPATH/bin
 # keychain
 /usr/bin/keychain $HOME/.ssh/id_rsa
 source $HOME/.keychain/`hostname`-sh
-
 # anyenv
 eval "$(anyenv init -)"
-
 # pyenv-virtualenv
 eval "$(pyenv virtualenv-init -)"
 
@@ -184,7 +182,7 @@ peco-select-history() {
 zle -N peco-select-history
 bindkey '^r' peco-select-history
 
-# ctrl+fで移動したディレクトリを選択する
+# ctrl+oで移動したディレクトリを選択する
 if [[ -n $(echo ${^fpath}/chpwd_recent_dirs(N)) && -n $(echo ${^fpath}/cdr(N)) ]]; then
     autoload -Uz chpwd_recent_dirs cdr add-zsh-hook
     add-zsh-hook chpwd chpwd_recent_dirs
@@ -313,4 +311,3 @@ zinit light chrissicool/zsh-256color
 zinit light zsh-users/zsh-autosuggestions
 zinit light zsh-users/zsh-completions
 zstyle ':completion:*' menu select
-
