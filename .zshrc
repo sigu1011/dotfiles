@@ -2,6 +2,26 @@
 # basic #
 #-------#
 
+# TERM
+export TERM=xterm-256color
+
+# snap
+export PATH=$PATH:/snap/bin
+# anyenv
+export PATH="$HOME/.anyenv/bin:$PATH"
+# pipx for awsume
+export PATH="$PATH:$HOME/.local/bin"
+# AWSume alias to source the AWSume script
+alias awsume="source \$(pyenv which awsume)"
+# Auto-Complete function for AWSume
+fpath=(~/.awsume/zsh-autocomplete/ $fpath)
+# golang
+export PATH=$PATH:/usr/local/go/bin
+export GOPATH=$HOME/goprojects
+export PATH=$PATH:$GOPATH/bin
+# cargo
+#. "$HOME/.cargo/env"
+
 # vimキーバインド
 bindkey -v
 
@@ -49,33 +69,9 @@ setopt histignoredups
 # 重複するコマンドは古い履歴から削除する
 setopt histignorealldups
 
-#--------#
-# export #
-#--------#
-
-# TERM
-export TERM=xterm-256color
-
-# snap
-export PATH=$PATH:/snap/bin
-
-# anyenv
-export PATH="$HOME/.anyenv/bin:$PATH"
-
-# pipx for awsume
-export PATH="$PATH:$HOME/.local/bin"
-# AWSume alias to source the AWSume script
-alias awsume="source \$(pyenv which awsume)"
-# Auto-Complete function for AWSume
-fpath=(~/.awsume/zsh-autocomplete/ $fpath)
-
-# golang
-export PATH=$PATH:/usr/local/go/bin
-export GOPATH=$HOME/goprojects
-export PATH=$PATH:$GOPATH/bin
-
-# cargo
-#. "$HOME/.cargo/env"
+#-------#
+# color #
+#-------#
 
 # ls cmd color
 export LSCOLORS=gxfxcxdxbxegedabagacag
