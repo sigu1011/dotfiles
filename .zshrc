@@ -2,8 +2,29 @@
 # basic #
 #-------#
 
-# TERM
+# vimキーバインド
+bindkey -v
+
+# ノーマルモードへの移行を'jj'に変更
+bindkey -M viins 'jj' vi-cmd-mode
+
+# グロブ展開をしない
+setopt nonomatch
+
 export TERM=xterm-256color
+export LSCOLORS=gxfxcxdxbxegedabagacag
+export LS_COLORS='di=36;40:ln=35;40:so=32;40:pi=33;40:ex=31;40:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=30;46'
+
+case "${OSTYPE}" in
+darwin*)
+  # Mac
+  alias ls="ls -GF"
+  ;;
+linux*)
+  # Linux
+  alias ls='ls -F --color'
+  ;;
+esac
 
 # snap
 export PATH=$PATH:/snap/bin
@@ -22,12 +43,6 @@ export PATH=$PATH:$GOPATH/bin
 # cargo
 #. "$HOME/.cargo/env"
 
-# vimキーバインド
-bindkey -v
-
-# ノーマルモードへの移行を'jj'に変更
-bindkey -M viins 'jj' vi-cmd-mode
-
 # keychain
 /usr/bin/keychain $HOME/.ssh/id_rsa
 source $HOME/.keychain/`hostname`-sh
@@ -37,9 +52,6 @@ eval "$(anyenv init -)"
 
 # pyenv-virtualenv
 eval "$(pyenv virtualenv-init -)"
-
-# グロブ展開をしない
-setopt nonomatch
 
 #---------#
 # history #
@@ -68,26 +80,6 @@ setopt histignoredups
 
 # 重複するコマンドは古い履歴から削除する
 setopt histignorealldups
-
-#-------#
-# color #
-#-------#
-
-# ls cmd color
-export LSCOLORS=gxfxcxdxbxegedabagacag
-export LS_COLORS='di=36;40:ln=35;40:so=32;40:pi=33;40:ex=31;40:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=30;46'
-
-# lsがカラー表示になるようエイリアスを設定
-case "${OSTYPE}" in
-darwin*)
-  # Mac
-  alias ls="ls -GF"
-  ;;
-linux*)
-  # Linux
-  alias ls='ls -F --color'
-  ;;
-esac
 
 #-------#
 # alias #
@@ -246,6 +238,34 @@ setopt auto_pushd
 
 # auto_pushdで重複するディレクトリは記録しない
 setopt pushd_ignore_dups
+
+#-------#
+# color #
+#-------#
+
+autoload colors
+colors
+
+# プロンプト
+PROMPT="%{${fg[green]}%}%n@%m %{${fg[yellow]}%}%~ %{${fg[red]}%}%# %{${reset_color}%}"
+# プロンプト指定(コマンドの続き)
+PROMPT2="%{${fg[yellow]}%} %_ > %{${reset_color}%}"
+# プロンプト指定(訂正機能)
+SPROMPT="%{${fg[red]}%}correct: %R -> %r ? [n,y,a,e] %{${reset_color}%}"
+
+# vi modeをプロンプトに表示する
+function zle-line-init zle-keymap-select {
+    VIM_NORMAL="%K{208}%F{black}<-%k%f%K{208}%F{white} % NORMAL %k%f%K{black}%F{208}->%k%f" 
+    VIM_INSERT="%K{075}%F{black}<-%k%f%K{075}%F{white} % INSERT %k%f%K{black}%F{075}->%k%f"
+    RPS1="${${KEYMAP/vicmd/$VIM_NORMAL}/(main|viins)/$VIM_INSERT}"
+    RPS2=$RPS1
+    zle reset-prompt
+}
+zle -N zle-line-init
+zle -N zle-keymap-select
+
+# 補完候補もLS_COLORSに合わせて色を付与
+zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
 
 #-------#
 # zinit #
