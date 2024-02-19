@@ -213,7 +213,7 @@ peco-cdr () {
     fi
 }
 zle -N peco-cdr
-bindkey '^f' peco-cdr
+bindkey '^o' peco-cdr
 
 # pecoでコンテナを選択し、bashで接続する
 alias deb='docker exec -it $(docker ps | peco | cut -d " " -f 1) /bin/bash'
